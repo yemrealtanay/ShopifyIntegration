@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\CreateProductOnShopifyJob;
 use Illuminate\Console\Command;
+use App\DTO\Product;
 use Shopify\Clients\Rest as ShopifyAPI;
 use Google\Cloud\Translate\V2\TranslateClient;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -40,45 +41,44 @@ class CreateShopifyProductsFromExcelCommand extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(TranslateClient $translater)
     {
         $spreadsheet = IOFactory::load(Storage::path('demo.xls'));
-        $worksheet = $spreadsheet->getActiveSheet();
-        $highestRow = $worksheet->getHighestRow();
-
+        $highestRow = $spreadsheet->getActiveSheet()->getHighestRow();
         $this->line("Excel has " . $highestRow . " lines. It means it has " . ((int)$highestRow - 3) . " products.");
 
-        $imageUrlColumns = ["AZ", "BA", "BB", "BC", "BD", "BE", "BF", "BG", "BH", "BJ"];
+        $productsData = Product::createCollectionFromExcel($spreadsheet);
+        //  Create a Shopify product with each line
+        foreach ($productsData as $productData) {
 
-        for ($i = 4; $i <= $highestRow; $i++) {
             $productToCreate = [
                 "title" =>
-                    $worksheet->getCell('F' . $i)->getValue() . " " .
-                    $worksheet->getCell('I' . $i)->getValue() . " " .
-                    $worksheet->getCell('J' . $i)->getValue() . " - " .
-                    $worksheet->getCell('E' . $i)->getValue(),
+                    $translater->translate($productData["type"])['text'] . " " .
+                    $productData["collection"] . ", " .
+                    $translater->translate(
+                        $productData["color"]
+                    )['text'] . ", "
+                    . $productData["sizeName"],
 
-                "body_html" => "<strong>Good " . $worksheet->getCell('I' . $i)->getValue() . " " . $worksheet->getCell('J' . $i)->getValue() . "!</strong>",
+                "body_html" => "<strong>" . $translater->translate(
+                        $productData["type"] . " " . $productData["category"]
+                    )['text'] . "!</strong>",
 
-                "vendor" => $worksheet->getCell('F' . $i)->getValue(),
+                "vendor" => $productData["brand"],
 
-                "product_type" => $worksheet->getCell('I' . $i)->getValue(),
+                "product_type" => $translater->translate(
+                    $productData["type"]
+                )['text'],
 
                 "variants" => [
                     [
-                        "sku" => $worksheet->getCell('E' . $i)->getValue(),
-                        "price" => $worksheet->getCell('Q' . $i)->getValue(),
+                        "sku" => $productData["code"],
+                        "price" => $productData["price"],
                     ]
                 ],
 
-                "images" => []
+                "images" => $productData["images"],
             ];
-
-            foreach ($imageUrlColumns as $column) {
-                if ($worksheet->getCell($column . $i)->getValue() != "") {
-                    $productToCreate["images"][] = ["src" => $worksheet->getCell($column . $i)->getValue()];
-                }
-            }
 
             $this->line($productToCreate["title"] . " creating with " . count($productToCreate["images"]) . " images...");
 
