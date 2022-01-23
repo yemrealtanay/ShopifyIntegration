@@ -10,3 +10,10 @@
 ## About Project
 
 This project is a project that will allow you to add the data to be automatically retrieved via the excel file to your shopify account and to display and add or remove the data in the language you want thanks to the google translate api.
+
+## Project Dependencies
+
+This project needs 3 Packages:
+1: phpoffice/phpspreadsheet for the excel files.
+2: google/cloud-translate for the google translate api.
+3: shopify/shopify-api for the shopify api.

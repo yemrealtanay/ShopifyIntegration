@@ -30,4 +30,18 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'shopify' => [
+        'app_key' => env('SHOPIFY_API_VERSION'),
+        'app_password' => env('SHOPIFY_APP_PASSWORD'),
+        'app_scopes' => env('SHOPIFY_APP_SCOPES'),
+        'app_host' => env('SHOPIFY_APP_HOST'),
+        'api_version' => env('SHOPIFY_API_VERSION'),
+        'store_domain' => env('SHOPIFY_STORE_DOMAIN'),
+    ],
+
+    'google_cloud' => [
+        'key_file' => env('GOOGLE_CLOUD_KEY_FILE'),
+        'translation_default_target'=> env('GOOGLE_CLOUD_TRANSLATION_DEFAULT_TARGET', null),
+    ],
+
 ];
