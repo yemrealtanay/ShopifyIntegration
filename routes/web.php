@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +17,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('exceltest', function () {
+    $reader = IOFactory::createReaderForFile(Storage::path('demo.xls'));
+    $reader->setReadDataOnly(true);
+    $spreadsheet = $reader->load(Storage::path('demo.xls'));
+
+    $text = '';
+
+    for($i = 4; $i < 104; $i++) {
+        $text .= $spreadsheet->getActiveSheet()->getCell('E'.$i)->getValue().'<br>';
+    }
+    return $text;
 });
