@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\CreateProductOnShopifyJob;
 use Illuminate\Console\Command;
 use Shopify\Clients\Rest as ShopifyAPI;
 use Google\Cloud\Translate\V2\TranslateClient;
@@ -39,7 +40,7 @@ class CreateShopifyProductsFromExcelCommand extends Command
      *
      * @return int
      */
-    public function handle(ShopifyAPI $shopify)
+    public function handle()
     {
         $spreadsheet = IOFactory::load(Storage::path('demo.xls'));
         $worksheet = $spreadsheet->getActiveSheet();
@@ -81,17 +82,10 @@ class CreateShopifyProductsFromExcelCommand extends Command
 
             $this->line($productToCreate["title"] . " creating with " . count($productToCreate["images"]) . " images...");
 
-            $response = $shopify->post(
-                "products",
-                [
-                    "product" => $productToCreate
-                ]
-            );
-
-            $this->info("Create product process resulted with " . $response->getStatusCode() . " code.");
-            $this->line(" ");
+            $dispatchedJob = CreateProductOnShopifyJob::dispatch($productToCreate);
         }
 
-        $this->info("Finished");
+        $this->info("Create product job has been dipatched.");
+        $this->line(" ");
     }
 }
