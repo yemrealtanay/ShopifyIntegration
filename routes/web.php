@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\Helpers\TranslateHelper as TranslateClient;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,10 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('translatetest', function (TranslateClient $translate){
+    return $translate->translate('merhaba');
 });
 
 Route::get('exceltest', function () {

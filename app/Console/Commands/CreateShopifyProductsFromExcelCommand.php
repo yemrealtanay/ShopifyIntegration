@@ -44,8 +44,6 @@ class CreateShopifyProductsFromExcelCommand extends Command
     public function handle(TranslateClient $translater)
     {
         $spreadsheet = IOFactory::load(Storage::path('demo.xls'));
-        $highestRow = $spreadsheet->getActiveSheet()->getHighestRow();
-        $this->line("Excel has " . $highestRow . " lines. It means it has " . ((int)$highestRow - 3) . " products.");
 
         $productsData = Product::createCollectionFromExcel($spreadsheet);
         //  Create a Shopify product with each line
@@ -53,31 +51,31 @@ class CreateShopifyProductsFromExcelCommand extends Command
 
             $productToCreate = [
                 "title" =>
-                    $translater->translate($productData["type"])['text'] . " " .
-                    $productData["collection"] . ", " .
+                    $translater->translate($productData->type)['text'] . " " .
+                    $productData->collection . ", " .
                     $translater->translate(
-                        $productData["color"]
+                        $productData->color
                     )['text'] . ", "
-                    . $productData["sizeName"],
+                    . $productData->sizeName,
 
                 "body_html" => "<strong>" . $translater->translate(
-                        $productData["type"] . " " . $productData["category"]
+                        $productData->type . " " . $productData->category
                     )['text'] . "!</strong>",
 
-                "vendor" => $productData["brand"],
+                "vendor" => $productData->brand,
 
                 "product_type" => $translater->translate(
-                    $productData["type"]
+                    $productData->type
                 )['text'],
 
                 "variants" => [
                     [
-                        "sku" => $productData["code"],
-                        "price" => $productData["price"],
+                        "sku" => $productData->code,
+                        "price" => $productData->price,
                     ]
                 ],
 
-                "images" => $productData["images"],
+                "images" => $productData->images,
             ];
 
             $this->line($productToCreate["title"] . " creating with " . count($productToCreate["images"]) . " images...");

@@ -40,7 +40,7 @@ return [
     ],
 
     'google_cloud' => [
-        'key_file' => env('GOOGLE_CLOUD_KEY_FILE'),
+        'key_file' => env('GOOGLE_TRANSLATION_API_KEY_FILE_NAME'),
         'translation_default_target'=> env('GOOGLE_CLOUD_TRANSLATION_DEFAULT_TARGET', null),
     ],
 
