@@ -5,8 +5,8 @@ namespace App\Console\Commands;
 use App\Jobs\CreateProductOnShopifyJob;
 use Illuminate\Console\Command;
 use App\DTO\Product;
+use App\Helpers\TranslateHelper as TranslateClient;
 use Shopify\Clients\Rest as ShopifyAPI;
-use Google\Cloud\Translate\V2\TranslateClient;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
 
@@ -44,29 +44,26 @@ class CreateShopifyProductsFromExcelCommand extends Command
     public function handle(TranslateClient $translater)
     {
         $spreadsheet = IOFactory::load(Storage::path('demo.xls'));
-
         $productsData = Product::createCollectionFromExcel($spreadsheet);
         //  Create a Shopify product with each line
         foreach ($productsData as $productData) {
 
             $productToCreate = [
                 "title" =>
-                    $translater->translate($productData->type)['text'] . " " .
+                    $translater->translate($productData->type) . " " .
                     $productData->collection . ", " .
-                    $translater->translate(
-                        $productData->color
-                    )['text'] . ", "
-                    . $productData->sizeName,
+                    $translater->translate($productData->color) . ", " .
+                    $productData->sizeName,
 
                 "body_html" => "<strong>" . $translater->translate(
                         $productData->type . " " . $productData->category
-                    )['text'] . "!</strong>",
+                    ) . "!</strong>",
 
                 "vendor" => $productData->brand,
 
                 "product_type" => $translater->translate(
                     $productData->type
-                )['text'],
+                ),
 
                 "variants" => [
                     [
@@ -80,7 +77,7 @@ class CreateShopifyProductsFromExcelCommand extends Command
 
             $this->line($productToCreate["title"] . " creating with " . count($productToCreate["images"]) . " images...");
 
-            $dispatchedJob = CreateProductOnShopifyJob::dispatch($productToCreate);
+            dump($productToCreate);
         }
 
         $this->info("Create product job has been dipatched.");
