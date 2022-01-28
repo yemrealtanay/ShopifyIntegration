@@ -13,7 +13,7 @@ This project is a project that will allow you to add the data to be automaticall
 
 ## Project Dependencies
 
-### This project needs 3 Packages:
+### This project needs 4 Packages:
 
 1. phpoffice/phpspreadsheet for the excel files.
 2. google/cloud-translate for the google translate api.
