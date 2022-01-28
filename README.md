@@ -13,7 +13,9 @@ This project is a project that will allow you to add the data to be automaticall
 
 ## Project Dependencies
 
-This project needs 3 Packages:
-1: phpoffice/phpspreadsheet for the excel files.
-2: google/cloud-translate for the google translate api.
-3: shopify/shopify-api for the shopify api.
+### This project needs 3 Packages:
+
+1. phpoffice/phpspreadsheet for the excel files.
+2. google/cloud-translate for the google translate api.
+3. shopify/shopify-api for the shopify api connection.
+4. Laravel Horizon for queued jobs.
