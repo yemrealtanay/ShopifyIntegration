@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Helpers\TranslateHelper as TranslateClient;
+use Shopify\Clients\Rest;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,11 @@ use App\Helpers\TranslateHelper as TranslateClient;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('shopifytest', function (Rest $client) {
+    $response = $client->get('products');
+    return $response->getDecodedBody();
 });
 
 Route::get('translatetest', function (TranslateClient $translate){

@@ -31,9 +31,9 @@ return [
     ],
 
     'shopify' => [
-        'app_key' => env('SHOPIFY_API_VERSION'),
+        'app_key' => env('SHOPIFY_APP_KEY'),
         'app_password' => env('SHOPIFY_APP_PASSWORD'),
-        'app_scopes' => env('SHOPIFY_APP_SCOPES'),
+        'app_scopes' => explode(',', env('SHOPIFY_APP_SCOPES')),
         'app_host' => env('SHOPIFY_APP_HOST'),
         'api_version' => env('SHOPIFY_API_VERSION'),
         'store_domain' => env('SHOPIFY_STORE_DOMAIN'),

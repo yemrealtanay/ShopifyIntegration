@@ -14,6 +14,7 @@
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "phpoffice/phpspreadsheet": "^1.21",
+        "predis/predis": "^1.1",
         "shopify/shopify-api": "^1.0"
     },
     "require-dev": {

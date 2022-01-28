@@ -2,13 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\CreateProductOnShopifyJob;
+use App\Jobs\CreateShopifyProductsFromExcelJob;
 use Illuminate\Console\Command;
-use App\DTO\Product;
-use App\Helpers\TranslateHelper as TranslateClient;
-use Shopify\Clients\Rest as ShopifyAPI;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use Illuminate\Support\Facades\Storage;
 
 class CreateShopifyProductsFromExcelCommand extends Command
 {
@@ -17,14 +12,14 @@ class CreateShopifyProductsFromExcelCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'shopify:fromexcel';
+    protected $signature = 'shopify:fromexcel {file}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create Shopify Products from Excel File';
+    protected $description = 'Create Shopify Products From Excel File';
 
     /**
      * Create a new command instance.
@@ -41,46 +36,10 @@ class CreateShopifyProductsFromExcelCommand extends Command
      *
      * @return int
      */
-    public function handle(TranslateClient $translater)
+    public function handle()
     {
-        $spreadsheet = IOFactory::load(Storage::path('demo.xls'));
-        $productsData = Product::createCollectionFromExcel($spreadsheet);
-        //  Create a Shopify product with each line
-        foreach ($productsData as $productData) {
+        CreateShopifyProductsFromExcelJob::dispatch($this->argument('file'));
 
-            $productToCreate = [
-                "title" =>
-                    $translater->translate($productData->type) . " " .
-                    $productData->collection . ", " .
-                    $translater->translate($productData->color) . ", " .
-                    $productData->sizeName,
-
-                "body_html" => "<strong>" . $translater->translate(
-                        $productData->type . " " . $productData->category
-                    ) . "!</strong>",
-
-                "vendor" => $productData->brand,
-
-                "product_type" => $translater->translate(
-                    $productData->type
-                ),
-
-                "variants" => [
-                    [
-                        "sku" => $productData->code,
-                        "price" => $productData->price,
-                    ]
-                ],
-
-                "images" => $productData->images,
-            ];
-
-            $this->line($productToCreate["title"] . " creating with " . count($productToCreate["images"]) . " images...");
-
-            dump($productToCreate);
-        }
-
-        $this->info("Create product job has been dipatched.");
-        $this->line(" ");
+        $this->info("Finished");
     }
 }

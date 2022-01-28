@@ -22,7 +22,7 @@ class ShopifyServiceProvider extends ServiceProvider
                 config('services.shopify.app_password'),
                 config('services.shopify.app_scopes'),
                 config('services.shopify.app_host'),
-                $app-make(FileSessionStorage::class),
+                $app->make(FileSessionStorage::class),
                 config('services.shopify.api_version'),
                 false,
                 true
